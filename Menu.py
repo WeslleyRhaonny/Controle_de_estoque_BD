@@ -14,7 +14,10 @@ class Menu:
     valid: bool = False
 
     def __init__(self) -> None:
-        self.sgbd = SGBD()
+        cadastro_lucas = ["postgres", "postgres", "admin", "localhost", "5432"]
+        cadastro_eliane = ["postgres", "postgres", "admin@123", "localhost", "5432"]
+        cadastro_wesley = ["", "", "", "", ""]
+        self.sgbd = SGBD(*cadastro_lucas)
         self.vd = Validator()
         self.ti = TablesInfo()
 

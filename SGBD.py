@@ -7,7 +7,6 @@ class SGBD:
         self,
         dbname: str = "postgres",
         user: str = "postgres",
-#        password: str = "admin",
         password: str = "admin@123",
         host: str = "localhost",
         port: str = "5432",
