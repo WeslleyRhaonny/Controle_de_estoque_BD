@@ -61,7 +61,7 @@ class Menu:
         print("4. Remover um produto")
         print("5. Listar todos os produtos")
         print("6. Mostrar um produto")
-        print("7. Exibir relatorio de estoque:")
+        print("7. Exibir relatorio de estoque")
         print("8. Sair")
 
     def main_loop(self) -> None:

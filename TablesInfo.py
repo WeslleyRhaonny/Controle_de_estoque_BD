@@ -25,10 +25,12 @@ class TablesInfo:
         },
         "compra": {
             "compra_id": "SERIAL PRIMARY KEY",
-            "cliente_id": "INTEGER REFERENCES cliente(cliente_id) NOT NULL",
-            "vendedor_id": "INTEGER REFERENCES vendedor(vendedor_id) NOT NULL",
+            "cliente_id": "INTEGER NOT NULL",
+            "vendedor_id": "INTEGER NOT NULL",
             "tipo_pagamento": "VARCHAR(50) NOT NULL",
             "data": "DATE NOT NULL",
+            "FOREIGN KEY (cliente_id) REFERENCES cliente(cliente_id)": "",
+            "FOREIGN KEY (vendedor_id) REFERENCES vendedor(vendedor_id)": "",
         },
         "possui": {
             "compra_id": "INTEGER REFERENCES compra(compra_id) NOT NULL",
