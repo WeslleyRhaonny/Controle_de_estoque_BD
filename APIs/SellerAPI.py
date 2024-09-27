@@ -1,7 +1,7 @@
 from AuxiliaryFiles.SGBD import SGBD
 from AuxiliaryFiles.Validator import Validator
 from AuxiliaryFiles.TablesClasses import Seller
-from typing import Optional, Union
+from typing import Optional, Tuple
 
 
 class SellerAPI:
@@ -12,7 +12,7 @@ class SellerAPI:
         self.sgbd = sgbd
         self.vd = vd
 
-    def login(self) -> Union[int, bool]:
+    def login(self) -> Tuple[bool, int]:
         seller_id = self.vd.validate_int(
             "\nInsira o ID do vendedor: ",
             "Por favor, insira um ID valido.",
@@ -22,8 +22,8 @@ class SellerAPI:
         seller_data = self.sgbd.read("vendedor", "senha", f"vendedor_id = {seller_id}")
 
         if not seller_data:
-            print("O vendedor informado nao esta registrado.")
-            return False
+            print("\nO vendedor informado nao esta registrado.")
+            return (False, -1)
 
         password = self.vd.validate_str(
             "\nInsira a senha do vendedor: ",
@@ -33,12 +33,13 @@ class SellerAPI:
 
         seller_password = seller_data[0][0]
         if password != seller_password:
-            print("A senha informada esta incorreta.")
-            return False
+            print("\nA senha informada esta incorreta.")
+            return (False, -1)
 
-        return seller_id
+        print("\nLog in realizado com sucesso.")
+        return (True, seller_id)
 
-    def register(self) -> bool:
+    def register(self) -> Tuple[bool, int]:
         password = self.vd.validate_str(
             "Informe a senha do administrador para realizar o cadastro de um novo funcionário: ",
             "\nPor favor, informe uma senha válida.\n",
@@ -46,8 +47,11 @@ class SellerAPI:
         )
         if password != "123":
             print("\nSenha incorreta. Cancelando o registro de novo vendedor.")
-            return False
+            return (False, -1)
 
         seller = Seller()
-        seller_id = self.sgbd.insert("vendedor", seller.columns, seller.values, ("vendedor_id"))
+        seller_id = self.sgbd.insert("vendedor", seller.columns, seller.values, ("vendedor_id",))[0]
+        print("\nCadastro realizado com sucesso.")
         print(f"O ID do vendedor cadastrado é: '{seller_id}', esse ID será utilizado junto da senha para realizar o login.")
+
+        return (True, seller_id)

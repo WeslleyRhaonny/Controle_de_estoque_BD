@@ -1,6 +1,6 @@
-from TablesInfo import TablesInfo
-from SGBD import SGBD
-from Validator import Validator
+from AuxiliaryFiles.TablesInfo import TablesInfo
+from AuxiliaryFiles.SGBD import SGBD
+from AuxiliaryFiles.Validator import Validator
 from typing import Optional, Tuple, List
 
 
@@ -132,7 +132,7 @@ class Client:
 
     def change_password(self, vd: Validator):
         self.values[1] = vd.validate_str(
-            "\nInsira a senha do cliente (Com ate 20 caracteres): ",
+            "Insira a senha do cliente (Com ate 20 caracteres): ",
             "Por favor, insira uma senha valida, com tamanho entre 3 e 20.\n",
             lambda x: 3 <= len(x) and len(x) <= 20,
         )
@@ -197,7 +197,7 @@ class Seller:
 
     def change_password(self, vd: Validator):
         self.values[1] = vd.validate_str(
-            "\nInsira a senha do cliente (Com ate 20 caracteres): ",
+            "Insira a senha do cliente (Com ate 20 caracteres): ",
             "Por favor, insira uma senha valida, com tamanho entre 3 e 20.\n",
             lambda x: 3 <= len(x) and len(x) <= 20,
         )

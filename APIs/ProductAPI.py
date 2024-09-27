@@ -12,17 +12,16 @@ class ProductAPI:
         self.sgbd = sgbd
         self.vd = vd
 
-    def show_products(products: List[Tuple[str]]):
-        print(f"+{'-' * 96}+")
-        print(f"| {'ID':^5} | {'Nome':^20} | {'Preco':^10} | Quantidade | Data de Validade | Data de Fabricacao | Categoria ")
-        print(f"+{'-' * 96}+")
+    def show_products(self, products: List[Tuple]):
+        print(f"\n+{'-' * 119}+")
+        print(f"| {'ID':^5} | {'Nome':^20} | {'Preco':^10} | Quantidade | Data de Validade | Data de Fabricacao | {'Categoria':^20} |")
+        print(f"+{'-' * 119}+")
         for product in products:
             datav_centralizada = str(product[4]).center(16)
             dataf_centralizada = str(product[5]).center(18)
-            print(f"| {product[0]:^5} | {product[1]:^20} | {product[2]:>10.2f} | {product[3]:>10} | {datav_centralizada} | {dataf_centralizada} |")
+            print(f"| {product[0]:^5} | {product[1]:^20} | {product[2]:>10.2f} | {product[3]:>10} | {datav_centralizada} | {dataf_centralizada} | {product[7]:^20} |")
             sleep(0.1)
-        print(f"+{'-' * 96}+")
-        print("\n")   
+        print(f"+{'-' * 119}+")
 
     def search_product_by_name(self) -> None:
         name = self.vd.validate_str(
@@ -40,9 +39,10 @@ class ProductAPI:
         )
 
         if not products:
-            print(f"Nao ha produtos registrados com o nome informado.\n")
+            print(f"\nNao ha produtos registrados com o nome informado.\n")
         else:
             self.show_products(products)
+        sleep(3)
 
     def search_product_by_price(self) -> None:
         print("\nPor favor, selecione uma opcao:")
@@ -96,9 +96,10 @@ class ProductAPI:
             )
 
         if not products:
-            print(f"Nao ha produtos registrados com os precos desejados.\n")
+            print(f"\nNao ha produtos registrados com os precos desejados.\n")
         else:
             self.show_products(products)
+        sleep(3)
 
     def search_product_by_category(self) -> None:
         category = self.vd.validate_str(
@@ -116,9 +117,10 @@ class ProductAPI:
         )
 
         if not products:
-            print(f"Nao ha produtos registrados com a categoria informada.\n")
+            print(f"\nNao ha produtos registrados com a categoria informada.\n")
         else:
             self.show_products(products)
+        sleep(3)
 
     def search_product_by_mari(self) -> None:
         products = self.sgbd.read(
@@ -128,16 +130,22 @@ class ProductAPI:
         )
 
         if not products:
-            print(f"Nao ha produtos registrados que foram feitos em Mari.\n")
+            print(f"\nNao ha produtos registrados que foram feitos em Mari.\n")
         else:
             self.show_products(products)
+        sleep(3)
 
     def list_all_products(self) -> None:
         products: Optional[List[Tuple]] = self.sgbd.read("produto", ("prod_id", "nome"))
         if not products:
-            print("Nao ha produtos disponiveis no momento.\n")
+            print("\nNao ha produtos disponiveis no momento.\n")
         else:
             print()
+            print(f"\n+{'-' * 30}+")
+            print(f"| {'ID':^5} | {'Nome':^20} |")
+            print(f"+{'-' * 30}+")
             for product in products:
-                print(", ".join(str(item) for item in product))
+                print(f"| {product[0]:^5} | {product[1]:^20} |")
                 sleep(0.1)
+            print(f"+{'-' * 30}+")
+        sleep(3)

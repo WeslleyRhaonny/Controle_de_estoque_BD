@@ -40,6 +40,6 @@ class TablesInfo:
             "quantidade": "INTEGER CHECK (quantidade >= 1) NOT NULL",
             "PRIMARY KEY (compra_id, prod_id)": "",
             "FOREIGN KEY (compra_id) REFERENCES compra(compra_id) ON UPDATE CASCADE ON DELETE CASCADE": "",
-            "FOREIGN KEY (prod_id) REFERENCES produtos(prod_id) ON UPDATE CASCADE ON DELETE CASCADE": "",
+            "FOREIGN KEY (prod_id) REFERENCES produto(prod_id) ON UPDATE CASCADE ON DELETE CASCADE": "",
         }
     }

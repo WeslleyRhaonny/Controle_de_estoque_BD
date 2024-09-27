@@ -2,7 +2,8 @@ from AuxiliaryFiles.SGBD import SGBD
 from AuxiliaryFiles.Validator import Validator
 from APIs.ClientAPI import ClientAPI
 from APIs.SellerAPI import SellerAPI
-from typing import Optional, Union
+from time import sleep
+from typing import Optional, Tuple
 
 
 class LogIn:
@@ -17,7 +18,7 @@ class LogIn:
         self.client_api = ClientAPI(sgbd, vd)
         self.seller_api = SellerAPI(sgbd, vd)
 
-    def main(self) -> None:
+    def main(self) -> Tuple[int, int]:
         while True:
             print("\n" + "=" * 60)
             print(f'{"Log In / Cadastro":^60}')
@@ -33,15 +34,17 @@ class LogIn:
             )
 
             if opt == 0:
-                return opt
+                return (0, 0)
             elif opt == 1:
                 result = self.login()
-                if result != False:
+                if result[0] != -1:
                     return result
             elif opt == 2:
-                return self.register()
+                result = self.register()
+                if result[0] != -1:
+                    return result
 
-    def login(self) -> Union[int, bool]:
+    def login(self) -> Tuple[int, int]:
         print("\n" + "=" * 60)
         print(f'{"Log In":^60}')
         print("=" * 60)
@@ -56,32 +59,45 @@ class LogIn:
         )
 
         if opt == 0:
-            return opt
+            return (0, 0)
         elif opt == 1:
-            return self.client_api.login()
+            result = self.client_api.login()
+            sleep(3)
+            if result[0]:
+                return (1, result[1])
+            return (-1, -1)
         elif opt == 2:
-            return self.seller_api.login()
+            result = self.seller_api.login()
+            sleep(3)
+            if result[0]:
+                return (2, result[1])
+            return (-1, -1)
 
-    def register(self) -> int:
-        while True:
-            print("\n" + "=" * 60)
-            print(f'{"Cadastro":^60}')
-            print("=" * 60)
-            print("\nPor favor, selecione uma opcao:")
-            print("1. Cadastrar-se como Cliente")
-            print("2. Cadastrar-se como Vendedor")
-            print("0. Sair")
-            opt: int = self.vd.validate_int(
-                "Escolha uma opcao: ",
-                "\nPor favor, selecione uma opcao valida, entre 0 e 2.\n",
-                lambda x: 0 <= x <= 2
-            )
+    def register(self) -> Tuple[int, int]:
+        print("\n" + "=" * 60)
+        print(f'{"Cadastro":^60}')
+        print("=" * 60)
+        print("\nPor favor, selecione uma opcao:")
+        print("1. Cadastrar-se como Cliente")
+        print("2. Cadastrar-se como Vendedor")
+        print("0. Sair")
+        opt: int = self.vd.validate_int(
+            "Escolha uma opcao: ",
+            "\nPor favor, selecione uma opcao valida, entre 0 e 2.\n",
+            lambda x: 0 <= x <= 2
+        )
 
-            if opt == 0:
-                return opt
-            elif opt == 1:
-                self.client_api.register_client()
-                return opt
-            elif opt == 2:
-                if self.seller_api.register_seller():
-                    return opt
+        if opt == 0:
+            return (0, 0)
+        elif opt == 1:
+            result = self.client_api.register()
+            sleep(3)
+            if result[0]:
+                return (1, result[1])
+            return (-1, -1)
+        elif opt == 2:
+            result = self.seller_api.register()
+            sleep(3)
+            if result[0]:
+                return (2, result[1])
+            return (-1, -1)

@@ -41,6 +41,7 @@ class AppManager:
         self.sgbd.connect()
         self.create_tables()
 
+        self.screens = dict()
         self.screens["start_menu"] = StartMenu(self.vd)
         self.screens["stock_view"] = StockView(self.sgbd, self.vd)
         self.screens["login"] = LogIn(self.sgbd, self.vd)
@@ -54,7 +55,7 @@ class AppManager:
             if next_screen == 0:
                 return
             elif next_screen == 1:
-                next_screen = self.screens["login"].main()
+                next_screen, user_id = self.screens["login"].main()
                 break
             elif next_screen == 2:
                 next_screen = self.screens["stock_view"].main()
@@ -62,9 +63,9 @@ class AppManager:
         if next_screen == 0:
             return
         elif next_screen == 1:
-            next_screen = next_screen = self.screens["logged_client"].main()
+            next_screen = next_screen = self.screens["logged_client"].main(user_id)
         elif next_screen == 2:
-            next_screen = next_screen = self.screens["logged_seller"].main()
+            next_screen = next_screen = self.screens["logged_seller"].main(user_id)
 
     def end(self) -> None:
         if self.valid:
