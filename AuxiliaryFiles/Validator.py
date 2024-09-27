@@ -8,7 +8,7 @@ class Validator:
             try:
                 aux = input(msg).strip()
                 if not aux:
-                    raise Exception("Input cannot be empty.")
+                    raise Exception
 
                 aux = int(aux)
 
@@ -18,14 +18,12 @@ class Validator:
             except Exception:
                 print(err)
 
-    def validate_float(
-        self, msg: str, err: str, test: Callable[[float], bool]
-    ) -> float:
+    def validate_float(self, msg: str, err: str, test: Callable[[float], bool]) -> float:
         while True:
             try:
                 aux = input(msg).strip().replace(",", ".")
                 if not aux:
-                    raise Exception("Input cannot be empty.")
+                    raise Exception
 
                 aux = float(aux)
 
@@ -40,7 +38,7 @@ class Validator:
             try:
                 aux = input(msg).strip()
                 if not aux:
-                    raise Exception("Input cannot be empty.")
+                    raise Exception
 
                 if test(aux):
                     return aux
@@ -48,14 +46,12 @@ class Validator:
             except Exception:
                 print(err)
 
-    def validate_date(
-        self, msg: str, err: str, test: Callable[[str], bool]
-    ) -> datetime:
+    def validate_date(self, msg: str, err: str, test: Callable[[str], bool]) -> datetime:
         while True:
             try:
                 aux = input(msg).strip().replace("/", "-")
                 if not aux:
-                    raise Exception("Input cannot be empty.")
+                    raise Exception
 
                 if not test(aux):
                     raise Exception

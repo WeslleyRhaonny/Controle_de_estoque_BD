@@ -1,6 +1,6 @@
 class TablesInfo:
     TABLES_DEFINITIONS = {
-        "produtos": {
+        "produto": {
             "prod_id": "SERIAL PRIMARY KEY",
             "nome": "VARCHAR(100) NOT NULL",
             "preco": "NUMERIC(10, 2) NOT NULL",
@@ -15,6 +15,7 @@ class TablesInfo:
         "cliente": {
             "cliente_id": "SERIAL PRIMARY KEY",
             "nome": "VARCHAR(100) NOT NULL",
+            "senha": "VARCHAR(20) NOT NULL",
             "torce_flamengo": "BOOLEAN NOT NULL",
             "assiste_one_piece": "BOOLEAN NOT NULL",
             "mora_em_sousa": "BOOLEAN NOT NULL",
@@ -22,6 +23,7 @@ class TablesInfo:
         "vendedor": {
             "vendedor_id": "SERIAL PRIMARY KEY",
             "nome": "VARCHAR(100) NOT NULL",
+            "senha": "VARCHAR(20) NOT NULL"
         },
         "compra": {
             "compra_id": "SERIAL PRIMARY KEY",
@@ -29,15 +31,15 @@ class TablesInfo:
             "vendedor_id": "INTEGER NOT NULL",
             "tipo_pagamento": "VARCHAR(50) NOT NULL",
             "data": "DATE NOT NULL",
-            "FOREIGN KEY (cliente_id) REFERENCES cliente(cliente_id)": "",
-            "FOREIGN KEY (vendedor_id) REFERENCES vendedor(vendedor_id)": "",
+            "FOREIGN KEY (cliente_id) REFERENCES cliente(cliente_id) ON UPDATE CASCADE ON DELETE CASCADE": "",
+            "FOREIGN KEY (vendedor_id) REFERENCES vendedor(vendedor_id) ON UPDATE CASCADE ON DELETE CASCADE": "",
         },
-        "possui": {
-            "compra_id": "INTEGER REFERENCES compra(compra_id) NOT NULL",
-            "prod_id": "INTEGER REFERENCES produtos(prod_id) NOT NULL",
+        "posse": {
+            "compra_id": "INTEGER NOT NULL",
+            "prod_id": "INTEGER NOT NULL",
             "quantidade": "INTEGER CHECK (quantidade >= 1) NOT NULL",
             "PRIMARY KEY (compra_id, prod_id)": "",
-            "FOREIGN KEY (compra_id) REFERENCES compra(compra_id)": "",
-            "FOREIGN KEY (prod_id) REFERENCES produtos(prod_id)": "",
+            "FOREIGN KEY (compra_id) REFERENCES compra(compra_id) ON UPDATE CASCADE ON DELETE CASCADE": "",
+            "FOREIGN KEY (prod_id) REFERENCES produtos(prod_id) ON UPDATE CASCADE ON DELETE CASCADE": "",
         }
     }

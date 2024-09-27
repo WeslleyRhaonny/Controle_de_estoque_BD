@@ -3,14 +3,7 @@ from typing import Optional, Dict, List, Tuple, Union
 
 
 class SGBD:
-    def __init__(
-        self,
-        dbname: str = "postgres",
-        user: str = "postgres",
-        password: str = "admin@123",
-        host: str = "localhost",
-        port: str = "5432",
-    ) -> None:
+    def __init__(self, dbname: str, user: str, password: str, host: str, port: str) -> None:
         self.conn_params: Dict[str, str] = {
             "dbname": dbname,
             "user": user,
@@ -101,7 +94,7 @@ class SGBD:
             print(f"Erro ao contar registros: {e}")
             return None
 
-    def insert(self, table: str, columns: Tuple[str], values: Tuple) -> None:
+    def insert(self, table: str, columns: Tuple[str], values: Tuple, return_columns: Optional[Tuple[str]] = None) -> Optional[Union[str,  Tuple[str]]]:
         """
         Insere dados na tabela especificada.
 
@@ -111,24 +104,27 @@ class SGBD:
         """
         if not self.table_exists(table):
             print(f"Tabela {table} não existe.")
-            return
+            return None
 
         try:
             col_str: str = ", ".join(columns)
             val_placeholders: str = ", ".join(["%s"] * len(values))
-            query: str = f"INSERT INTO {table} ({col_str}) VALUES ({val_placeholders})"
+            if return_columns:
+                return_str = ", ".join(return_columns)
+                query: str = f"INSERT INTO {table} ({col_str}) VALUES ({val_placeholders}) RETURNING {return_str}"
+            else:
+                query: str = f"INSERT INTO {table} ({col_str}) VALUES ({val_placeholders})"
+            
             self.cur.execute(query, values)
+            if return_columns:
+                result = self.cur.fetchone()
             self.conn.commit()
+            return result if result else None
         except Exception as e:
             print(f"Erro ao inserir dados: {e}")
             self.conn.rollback()
 
-    def read(
-        self,
-        table: str,
-        columns: Union[str, Tuple[str]] = "*",
-        conditions: Optional[str] = None,
-    ) -> Optional[List[Tuple]]:
+    def read(self, table: str, columns: Union[str, Tuple[str]] = "*", conditions: Optional[str] = None) -> Optional[List[Tuple]]:
         """
         Lê dados da tabela especificada.
 
@@ -157,9 +153,7 @@ class SGBD:
             print(f"Erro ao ler dados: {e}")
             return None
 
-    def update(
-        self, table: str, updates: Dict[str, Union[str, int, float]], conditions: str
-    ) -> None:
+    def update(self, table: str, updates: Dict[str, Union[str, int, float]], conditions: str) -> None:
         """
         Atualiza dados na tabela especificada.
 

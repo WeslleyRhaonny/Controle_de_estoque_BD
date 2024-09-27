@@ -1,0 +1,2 @@
+class LoggedClient:
+    pass

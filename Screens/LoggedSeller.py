@@ -1,0 +1,2 @@
+class LoggedSeller:
+    pass
