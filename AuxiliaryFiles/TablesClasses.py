@@ -45,49 +45,49 @@ class Product:
 
     def change_price(self, vd: Validator):
         self.values[1] = str(vd.validate_float(
-            "Insira o preco do produto: R$",
+            "\nInsira o preco do produto: R$",
             "Por favor, insira um preco valido.\n",
             lambda x: x >= 0.01 and x <= 99999999.99,
         ))
 
     def change_quantity(self, vd: Validator):
         self.values[2] = str(vd.validate_int(
-            "Insira a quantidade do produto: ",
+            "\nInsira a quantidade do produto: ",
             "Por favor, insira uma quantidade valida.\n",
             lambda x: x >= 0,
         ))
 
     def change_exp_date(self, vd: Validator):
         self.values[3] = vd.validate_date(
-            "Insira a data de validade do produto (Ano-Mes-Dia): ",
+            "\nInsira a data de validade do produto (Ano-Mes-Dia): ",
             "Por favor, insira uma data de validade válida.\n",
             lambda x: True,
         ).strftime("%Y-%m-%d")
 
     def change_fab_date(self, vd: Validator):
         self.values[4] = vd.validate_date(
-            "Insira a data de fabricacao do produto (Ano-Mes-Dia): ",
+            "\nInsira a data de fabricacao do produto (Ano-Mes-Dia): ",
             "Por favor, insira uma data de fabricacao válida.\n",
             lambda x: True,
         ).strftime("%Y-%m-%d")
 
     def change_description(self, vd: Validator):
         self.values[5] = vd.validate_str(
-            "Insira a descricao do produto: ",
+            "\nInsira a descricao do produto: ",
             "Por favor, insira uma descricao valida.\n",
             lambda x: True,
         )
 
     def change_category(self, vd: Validator):
         self.values[6] = vd.validate_str(
-            "Insira a categoria do produto (Com ate 100 caracteres): ",
+            "\nInsira a categoria do produto (Com ate 100 caracteres): ",
             "Por favor, insira uma categoria valida.\n",
             lambda x: len(x) <= 100,
         )
 
     def change_mari(self, vd: Validator):
         opt = vd.validate_str(
-            "Informe se o produto foi feito em Mari [S/N]: ",
+            "\nInforme se o produto foi feito em Mari [S/N]: ",
             "Por favor, responda apenas com 'Sim' ou 'Não'.\n",
             lambda x: x[0].lower() in "sn"
         )
@@ -197,7 +197,7 @@ class Seller:
 
     def change_password(self, vd: Validator):
         self.values[1] = vd.validate_str(
-            "Insira a senha do cliente (Com ate 20 caracteres): ",
+            "Insira a senha do vendedor (Com ate 20 caracteres): ",
             "Por favor, insira uma senha valida, com tamanho entre 3 e 20.\n",
             lambda x: 3 <= len(x) and len(x) <= 20,
         )

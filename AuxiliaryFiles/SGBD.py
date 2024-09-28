@@ -74,6 +74,23 @@ class SGBD:
             self.conn.rollback()
             return False
 
+    def create_or_replace_view(self, view_name: str, query: str) -> bool:
+        """
+        Cria ou substitui uma view no banco de dados.
+
+        :param view_name: Nome da view a ser criada ou substituída
+        :param query: Consulta SQL que define a view
+        :return: True se a view foi criada ou substituída com sucesso, False caso contrário
+        """
+        try:
+            self.cur.execute(f"CREATE OR REPLACE VIEW {view_name} AS {query}")
+            self.conn.commit()
+            return True
+        except Exception as e:
+            print(f"Erro ao criar ou substituir a view: {e}")
+            self.conn.rollback()
+            return False
+
     def count_rows(self, table: str) -> Optional[int]:
         """
         Conta o número de registros na tabela especificada.
@@ -116,6 +133,7 @@ class SGBD:
                 query: str = f"INSERT INTO {table} ({col_str}) VALUES ({val_placeholders})"
             
             self.cur.execute(query, values)
+            result = None
             if return_columns:
                 result = self.cur.fetchone()
             self.conn.commit()

@@ -8,7 +8,7 @@ class StartMenu:
     def __init__(self, vd: Validator) -> None:
         self.vd = vd
 
-    def main(self) -> None:
+    def main(self) -> int:
         print("\n" + "=" * 60)
         print(f'{"Menu Inicial":^60}')
         print("=" * 60)

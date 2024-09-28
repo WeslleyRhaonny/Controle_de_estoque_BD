@@ -1,6 +1,7 @@
 from AuxiliaryFiles.SGBD import SGBD
 from AuxiliaryFiles.Validator import Validator
 from APIs.ProductAPI import ProductAPI
+from time import sleep
 from typing import Optional
 
 
@@ -25,7 +26,7 @@ class StockView:
         print("3. Listar todos os produtos")
         print("0. Sair")
 
-    def main(self) -> None:
+    def main(self) -> int:
         while True:
             self.print_header()
             opt: int = self.vd.validate_int(
@@ -40,6 +41,7 @@ class StockView:
                 self.search_product()
             elif opt == 3:
                 self.prod_api.list_all_products()
+            sleep(3)
 
     def search_product(self) -> None:
         print("\nPor favor, selecione uma opcao:")

@@ -4,13 +4,12 @@ class TablesInfo:
             "prod_id": "SERIAL PRIMARY KEY",
             "nome": "VARCHAR(100) NOT NULL",
             "preco": "NUMERIC(10, 2) NOT NULL",
-            "quantidade": "INTEGER NOT NULL",
+            "quantidade": "INTEGER NOT NULL CHECK (quantidade >= 0)",
             "data_validade": "DATE NOT NULL",
             "data_fabricacao": "DATE NOT NULL",
             "descricao": "TEXT NOT NULL",
             "categoria": "VARCHAR(100) NOT NULL",
             "feito_em_mari": "BOOLEAN NOT NULL",
-            "CONSTRAINT check_quantidade CHECK (quantidade >= 0)": ""
         },
         "cliente": {
             "cliente_id": "SERIAL PRIMARY KEY",
@@ -27,19 +26,15 @@ class TablesInfo:
         },
         "compra": {
             "compra_id": "SERIAL PRIMARY KEY",
-            "cliente_id": "INTEGER NOT NULL",
-            "vendedor_id": "INTEGER NOT NULL",
+            "cliente_id": "INTEGER NOT NULL REFERENCES cliente(cliente_id) ON UPDATE CASCADE ON DELETE CASCADE",
+            "vendedor_id": "INTEGER NOT NULL REFERENCES vendedor(vendedor_id) ON UPDATE CASCADE ON DELETE CASCADE",
             "tipo_pagamento": "VARCHAR(50) NOT NULL",
-            "data": "DATE NOT NULL",
-            "FOREIGN KEY (cliente_id) REFERENCES cliente(cliente_id) ON UPDATE CASCADE ON DELETE CASCADE": "",
-            "FOREIGN KEY (vendedor_id) REFERENCES vendedor(vendedor_id) ON UPDATE CASCADE ON DELETE CASCADE": "",
+            "data": "DATE NOT NULL"
         },
         "posse": {
-            "compra_id": "INTEGER NOT NULL",
-            "prod_id": "INTEGER NOT NULL",
+            "compra_id": "INTEGER NOT NULL REFERENCES compra(compra_id) ON UPDATE CASCADE ON DELETE CASCADE",
+            "prod_id": "INTEGER NOT NULL REFERENCES produto(prod_id) ON UPDATE CASCADE ON DELETE CASCADE",
             "quantidade": "INTEGER CHECK (quantidade >= 1) NOT NULL",
-            "PRIMARY KEY (compra_id, prod_id)": "",
-            "FOREIGN KEY (compra_id) REFERENCES compra(compra_id) ON UPDATE CASCADE ON DELETE CASCADE": "",
-            "FOREIGN KEY (prod_id) REFERENCES produto(prod_id) ON UPDATE CASCADE ON DELETE CASCADE": "",
+            "PRIMARY KEY (compra_id, prod_id)": ""
         }
     }
