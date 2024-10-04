@@ -91,6 +91,22 @@ class SGBD:
             self.conn.rollback()
             return False
 
+    def execute_command(self, command: str) -> bool:
+        """
+        Executa um comando SQL.
+
+        :param command: Comando SQL a ser executado
+        :return: True se o comando foi executado com sucesso, False caso contrário
+        """
+        try:
+            self.cur.execute(command)
+            self.conn.commit()
+            return True
+        except Exception as e:
+            print(f"Erro ao executar o comando: {e}")
+            self.conn.rollback()
+            return False
+
     def count_rows(self, table: str) -> Optional[int]:
         """
         Conta o número de registros na tabela especificada.
@@ -131,7 +147,7 @@ class SGBD:
                 query: str = f"INSERT INTO {table} ({col_str}) VALUES ({val_placeholders}) RETURNING {return_str}"
             else:
                 query: str = f"INSERT INTO {table} ({col_str}) VALUES ({val_placeholders})"
-            
+
             self.cur.execute(query, values)
             result = None
             if return_columns:
@@ -142,7 +158,7 @@ class SGBD:
             print(f"Erro ao inserir dados: {e}")
             self.conn.rollback()
 
-    def read(self, table: str, columns: Union[str, Tuple[str]] = "*", conditions: Optional[str] = None) -> Optional[List[Tuple]]:
+    def read(self, table: str = None, columns: Union[str, Tuple[str]] = "*", conditions: Optional[str] = None, custom_query: Optional[str] = None) -> Optional[List[Tuple]]:
         """
         Lê dados da tabela especificada.
 
@@ -151,11 +167,13 @@ class SGBD:
         :param conditions: Condições da consulta (em formato de string SQL, ex: "id = 1")
         :return: Resultado da consulta
         """
-        if not self.table_exists(table):
-            print(f"Tabela {table} não existe.")
-            return None
+        if custom_query:
+            query = custom_query
+        else:
+            if not self.table_exists(table):
+                print(f"Tabela {table} não existe.")
+                return None
 
-        try:
             if isinstance(columns, tuple):
                 col_str = ", ".join(columns)
             else:
@@ -164,6 +182,8 @@ class SGBD:
             query = f"SELECT {col_str} FROM {table}"
             if conditions:
                 query += f" WHERE {conditions}"
+
+        try:
             self.cur.execute(query)
             results = self.cur.fetchall()
             return results
@@ -236,11 +256,6 @@ class SGBD:
         except Exception as e:
             print(f"Erro ao remover tabela: {e}")
             self.conn.rollback()
-
-
-
-
-
 
 
 #############################

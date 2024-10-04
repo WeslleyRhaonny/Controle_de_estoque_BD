@@ -3,7 +3,7 @@ from time import sleep
 from typing import Optional
 
 
-class MonthlyReportAPI:
+class ViewsAPI:
     sgbd: Optional[SGBD] = None
 
     def __init__(self, sgbd: SGBD) -> None:
@@ -11,19 +11,24 @@ class MonthlyReportAPI:
 
     def monthly_report(self) -> None:
         rows = self.sgbd.read("relatorio_mensal")
-            
-        print(f"\n+{'-' * 60}+")
+        
+        if rows == []:
+            print("\nNao ha compras cadastradas no momento.\n")
+            return
+
+        print(f"\n+{'-' * 124}+")
         sleep(0.1)
-        print(f"| {'Relatorio Mensal dos Vendedores':^58} |")
+        print(f"| {'Relatorio Mensal dos Vendedores':^122} |")
         sleep(0.1)
-        print(f"+{'-' * 60}+")
+        print(f"+{'-' * 124}+")
         sleep(0.1)
         print(f"| {'ID':^5} | {'Nome':^20} | {'Mes':^10} | Total de Produtos Vendidos | Total de Dinheiro | Media dos Precos dos Produtos |")
         sleep(0.1)
-        print(f"+{'-' * 60}+")
+        print(f"+{'-' * 124}+")
         sleep(0.1)
 
         for row in rows:
-            print(f"| {row[0]:^5} | {row[1]:^20} | {row[2]:^10} | {row[3]:^10} | {row[4]:^10.2f} | {row[5]:^10.2f} |")
+            row_date = row[2].strftime("%Y-%m")
+            print(f"| {row[0]:^5} | {row[1]:^20} | {str(row_date):^10} | {row[3]:^26} | {row[4]:^17.2f} | {row[5]:^29.2f} |")
             sleep(0.1)
-        print(f"+{'-' * 119}+")
+        print(f"+{'-' * 124}+")

@@ -29,7 +29,8 @@ class TablesInfo:
             "cliente_id": "INTEGER NOT NULL REFERENCES cliente(cliente_id) ON UPDATE CASCADE ON DELETE CASCADE",
             "vendedor_id": "INTEGER NOT NULL REFERENCES vendedor(vendedor_id) ON UPDATE CASCADE ON DELETE CASCADE",
             "tipo_pagamento": "VARCHAR(50) NOT NULL",
-            "data": "DATE NOT NULL"
+            "data": "DATE NOT NULL",
+            "preco_total": "NUMERIC(10,2) NOT NULL"
         },
         "posse": {
             "compra_id": "INTEGER NOT NULL REFERENCES compra(compra_id) ON UPDATE CASCADE ON DELETE CASCADE",

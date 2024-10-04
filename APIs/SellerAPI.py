@@ -1,6 +1,7 @@
 from AuxiliaryFiles.SGBD import SGBD
 from AuxiliaryFiles.Validator import Validator
 from AuxiliaryFiles.TablesClasses import Seller
+from time import sleep
 from typing import Optional, Tuple
 
 
@@ -55,3 +56,40 @@ class SellerAPI:
         print(f"O ID do vendedor cadastrado é: '{seller_id}', esse ID será utilizado junto da senha para realizar o login.")
 
         return (True, seller_id)
+
+    def select_seller(self) -> int:
+        sellers = self.sgbd.read("vendedor", ("vendedor_id", "nome"))
+        if not sellers:
+            print("\nNao ha vendedores disponiveis no momento, cancelando compra.\n")
+            return 0
+
+        print(f"\n+{'-' * 30}+")
+        sleep(0.1)
+        print(f"| {'ID':^5} | {'Nome':^20} |")
+        sleep(0.1)
+        print(f"+{'-' * 30}+")
+        sleep(0.1)
+        for seller in sellers:
+            print(f"| {seller[0]:^5} | {seller[1]:^20} |")
+            sleep(0.1)
+        print(f"+{'-' * 30}+\n")
+        sleep(0.1)
+
+        sellers_ids = [seller[0] for seller in sellers]
+
+        seller_id = self.vd.validate_int(
+            "Insira o ID do vendedor: ",
+            "Por favor, insira um ID valido.\n",
+            lambda x: x in sellers_ids,
+        )
+
+        return seller_id
+
+    def get_seller_by_id(self, seller_id):
+        seller = self.sgbd.read(
+            "vendedor",
+            "*",
+            f"vendedor_id = {seller_id}"
+        )
+
+        return seller

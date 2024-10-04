@@ -8,6 +8,7 @@ from AuxiliaryFiles.SGBD import SGBD
 from AuxiliaryFiles.Validator import Validator
 from AuxiliaryFiles.TablesInfo import TablesInfo
 from AuxiliaryFiles.ViewsInfo import ViewsInfo
+from AuxiliaryFiles.Procedures import Procedures
 from typing import Optional, Dict, Union
 
 
@@ -16,6 +17,7 @@ class AppManager:
     vd: Optional[Validator] = None
     ti: Optional[TablesInfo] = None
     vi: Optional[ViewsInfo] = None
+    pd: Optional[Procedures] = None
     valid: bool = False
     screens: Dict[str, Union[StartMenu, StockView, LogIn, LoggedClient, LoggedSeller]]
 
@@ -27,6 +29,7 @@ class AppManager:
         self.vd = Validator()
         self.ti = TablesInfo()
         self.vi = ViewsInfo()
+        self.pd = Procedures()
 
     def create_tables(self) -> None:
         if not self.valid:
@@ -40,6 +43,10 @@ class AppManager:
         for view_name, view_query in self.vi.VIEWS_DEFINITIONS.items():
             self.sgbd.create_or_replace_view(view_name, view_query)
 
+    def def_procedures(self) -> None:
+        for procedure in self.pd.PROCEDURES:
+            self.sgbd.execute_command(procedure)
+
     def start(self) -> None:
         if self.valid:
             return
@@ -48,6 +55,7 @@ class AppManager:
         self.sgbd.connect()
         self.create_tables()
         self.create_views()
+        self.def_procedures()
 
         self.screens = dict()
         self.screens["start_menu"] = StartMenu(self.vd)
@@ -71,9 +79,9 @@ class AppManager:
         if next_screen == 0:
             return
         elif next_screen == 1:
-            next_screen = self.screens["logged_client"].main(user_id)
+            self.screens["logged_client"].main(user_id)
         elif next_screen == 2:
-            next_screen = self.screens["logged_seller"].main()
+            self.screens["logged_seller"].main()
 
     def end(self) -> None:
         if self.valid:

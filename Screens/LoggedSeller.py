@@ -1,21 +1,22 @@
 from AuxiliaryFiles.SGBD import SGBD
 from AuxiliaryFiles.Validator import Validator
 from APIs.ProductAPI import ProductAPI
-from APIs.MonthlyReportAPI import MonthlyReportAPI
+from APIs.ViewsAPI import ViewsAPI
 from time import sleep
 from typing import Optional
+
 
 class LoggedSeller:
     sgbd: Optional[SGBD] = None
     vd: Optional[Validator] = None
     prod_api: Optional[ProductAPI] = None
-    mr_api: Optional[MonthlyReportAPI] = None
+    views_api: Optional[ViewsAPI] = None
 
     def __init__(self, sgbd: SGBD, vd: Validator) -> None:
         self.sgbd = sgbd
         self.vd = vd
         self.prod_api = ProductAPI(sgbd, vd)
-        self.mr_api = MonthlyReportAPI(sgbd)
+        self.views_api = ViewsAPI(sgbd)
 
     @staticmethod
     def print_header() -> None:
@@ -54,7 +55,7 @@ class LoggedSeller:
             elif opt == 5:
                 self.prod_api.list_all_products()
             elif opt == 6:
-                self.mr_api.monthly_report()
+                self.views_api.monthly_report()
             elif opt == 7:
                 self.prod_api.stock_report()
             sleep(3)
@@ -71,7 +72,7 @@ class LoggedSeller:
         opt: int = self.vd.validate_int(
             "Escolha uma opcao: ",
             "\nPor favor, selecione uma opcao valida, entre 0 e 5.\n",
-            lambda x: 0 <= x <= 5
+            lambda x: 0 <= x <= 5,
         )
 
         if opt == 0:
@@ -86,4 +87,3 @@ class LoggedSeller:
             self.prod_api.search_product_by_mari()
         elif opt == 5:
             self.prod_api.search_product_by_less_5()
-

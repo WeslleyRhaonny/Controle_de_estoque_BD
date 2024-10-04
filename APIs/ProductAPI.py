@@ -19,9 +19,12 @@ class ProductAPI:
         print(f"| {'ID':^5} | {'Nome':^20} | {'Preco':^10} | Quantidade | Data de Validade | Data de Fabricacao | {'Categoria':^20} |")
         print(f"+{'-' * 119}+")
         for product in products:
+            preco = f"{product[2]:.2f}"
+            preco = f"R${preco}"
+            preco = f"{preco:^10}"
             datav_centralizada = str(product[4]).center(16)
             dataf_centralizada = str(product[5]).center(18)
-            print(f"| {product[0]:^5} | {product[1]:^20} | {product[2]:>10.2f} | {product[3]:>10} | {datav_centralizada} | {dataf_centralizada} | {product[7]:^20} |")
+            print(f"| {product[0]:^5} | {product[1]:^20} | {preco} | {product[3]:^10} | {datav_centralizada} | {dataf_centralizada} | {product[7]:^20} |")
             sleep(0.1)
         print(f"+{'-' * 119}+")
 
@@ -145,19 +148,28 @@ class ProductAPI:
         else:
             self.show_products(products)
 
+    def get_product_by_id(self, prod_id):
+        product = self.sgbd.read(
+            "produto",
+            "*",
+            f"prod_id = {prod_id}"
+        )
+
+        return product
+
     def list_all_products(self) -> None:
-        products: Optional[List[Tuple]] = self.sgbd.read("produto", ("prod_id", "nome"))
+        products: Optional[List[Tuple]] = self.sgbd.read("produto", ("prod_id", "nome", "quantidade"))
         if not products:
             print("\nNao ha produtos disponiveis no momento.\n")
         else:
             print()
-            print(f"\n+{'-' * 30}+")
-            print(f"| {'ID':^5} | {'Nome':^20} |")
-            print(f"+{'-' * 30}+")
+            print(f"\n+{'-' * 43}+")
+            print(f"| {'ID':^5} | {'Nome':^20} | {'Quantidade':^10} |")
+            print(f"+{'-' * 43}+")
             for product in products:
-                print(f"| {product[0]:^5} | {product[1]:^20} |")
+                print(f"| {product[0]:^5} | {product[1]:^20} | {product[2]:^10} |")
                 sleep(0.1)
-            print(f"+{'-' * 30}+")
+            print(f"+{'-' * 43}+")
 
     def insert_product(self) -> None:
         product = Product()
@@ -319,3 +331,21 @@ class ProductAPI:
                 sleep(0.1)
                 print(f"+{'-' * 60}+")
                 sleep(0.1)
+
+    def product_exists(self) -> int:
+        id = self.vd.validate_int(
+            "Insira o ID do produto: ",
+            "Por favor, insira um ID valido.\n",
+            lambda x: x >= 1
+        )
+
+        products = self.sgbd.read(
+            "produto", 
+            "*", 
+            f"prod_id = {id}"
+        )
+
+        if products:
+            return id
+        else:
+            return 0
