@@ -188,7 +188,7 @@ class ProductAPI:
             print("\nO produto informado nao esta registrado.")
             return
 
-        product_data = [str(x) for x in product_data[0]]
+        product_data = [str(x) for x in product_data[0]][1:]
         product = Product(product_data)
 
         wasAlterated = False
