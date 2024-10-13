@@ -6,6 +6,7 @@ from time import sleep
 from typing import Optional, Tuple
 
 
+
 class LogIn:
     sgbd: Optional[SGBD] = None
     vd: Optional[Validator] = None
