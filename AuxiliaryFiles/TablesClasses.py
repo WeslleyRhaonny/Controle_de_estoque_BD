@@ -152,7 +152,6 @@ class Client:
             lambda x: x[0].lower() in "sn"
         )
         self.values[3] = "TRUE" if opt in ['s', 'S'] else "FALSE"
-#        self.values[3] = "TRUE" if opt in 's' else "FALSE"
 
     def change_sousa(self, vd: Validator):
         opt = vd.validate_str(
