@@ -143,7 +143,7 @@ class Client:
             "Por favor, responda apenas com 'Sim' ou 'Não'.\n",
             lambda x: x[0].lower() in "sn"
         )
-        self.values[2] = "TRUE" if opt in 's' else "FALSE"
+        self.values[2] = "TRUE" if opt in ['s', 'S'] else "FALSE"
 
     def change_one_piece(self, vd: Validator):
         opt = vd.validate_str(
@@ -151,7 +151,8 @@ class Client:
             "Por favor, responda apenas com 'Sim' ou 'Não'.\n",
             lambda x: x[0].lower() in "sn"
         )
-        self.values[3] = "TRUE" if opt in 's' else "FALSE"
+        self.values[3] = "TRUE" if opt in ['s', 'S'] else "FALSE"
+#        self.values[3] = "TRUE" if opt in 's' else "FALSE"
 
     def change_sousa(self, vd: Validator):
         opt = vd.validate_str(
@@ -159,7 +160,7 @@ class Client:
             "Por favor, responda apenas com 'Sim' ou 'Não'.\n",
             lambda x: x[0].lower() in "sn"
         )
-        self.values[4] = "TRUE" if opt in 's' else "FALSE"
+        self.values[4] = "TRUE" if opt in ['s', 'S'] else "FALSE"
 
 
 class Seller:
