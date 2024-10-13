@@ -7,15 +7,6 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import tkinter as tk
 from tkinter import messagebox
 
-# Importações dos módulos das outras pastas
-# Certifique-se de que o caminho relativo esteja correto a partir do `FrontEnd.py`
-try:
-    # Tente importar o módulo `SGBD` a partir da pasta `AuxiliaryFiles`
-    from AuxiliaryFiles.SGBD import SGBD
-except ModuleNotFoundError:
-    # Se falhar, exibe uma mensagem de erro
-    print("Erro ao importar SGBD. Verifique o caminho do módulo e a estrutura do projeto.")
-
 # Importações das telas, removendo duplicatas e caminhos incorretos
 from LogIn import *  # Importe funções específicas se necessário
 from StartMenu import *  # Importe funções específicas se necessário
@@ -23,35 +14,61 @@ from StockView import *  # Importe funções específicas se necessário
 from LoggedClient import *  # Importe funções específicas se necessário
 from LoggedSeller import *  # Importe funções específicas se necessário
 
+from AuxiliaryFiles.SGBD import SGBD
+from AuxiliaryFiles.Validator import Validator
+from AppManager import AppManager
+from APIs.ClientAPI import ClientAPI
+# Criação de instâncias necessárias para o ClientAPI funcionar
+app_manager = AppManager()
+app_manager.start()
+sgbd = app_manager.sgbd
+vd = app_manager.vd
+client_api = ClientAPI(sgbd, vd)
+
 # Função para Tela de Login
 def login_screen():
     login = tk.Tk()
     login.title("Login")
     login.geometry("400x300")
-    
+
     tk.Label(login, text="Login", font=("Arial", 18)).pack(pady=20)
-    
-    tk.Label(login, text="Usuário:").pack()
+
+    tk.Label(login, text="Usuário (ID):").pack()
     username_entry = tk.Entry(login)
     username_entry.pack()
-    
+
     tk.Label(login, text="Senha:").pack()
     password_entry = tk.Entry(login, show="*")
     password_entry.pack()
-    
-    def verify_login():
-        username = username_entry.get()
+
+    def submit_login():
+        user_id = username_entry.get()
         password = password_entry.get()
-        # Aqui você pode adicionar lógica de verificação com o backend
-        if username == "admin" and password == "admin":  # Substitua pela lógica do seu backend
-            login.destroy()
-            start_menu_screen()
-        else:
-            messagebox.showerror("Erro", "Usuário ou senha inválidos!")
-    
-    tk.Button(login, text="Entrar", command=verify_login).pack(pady=20)
-    
+
+        try:
+            user_id = int(user_id)  # Convertendo o ID para inteiro
+        except ValueError:
+            messagebox.showerror("Erro", "ID do cliente deve ser um número.")
+            return
+
+        # Tentativa de login via client_api
+        try:
+            # Chamando a API de login com o ID e senha do cliente
+            result, client_id = client_api.login(user_id, password)
+
+            # Se o login for bem-sucedido
+            if result:
+                login.destroy()  # Fecha a tela de login
+                messagebox.showinfo("Sucesso", f"Login realizado com sucesso! ID: {client_id}")
+                view_client(client_id)  # Abre o menu principal
+            else:
+                messagebox.showerror("Erro", "Usuário ou senha inválidos!")
+        except Exception as e:
+            messagebox.showerror("Erro", f"Erro ao tentar login: {str(e)}")
+    tk.Button(login, text="Entrar", command=submit_login).pack(pady=20)
+
     login.mainloop()
+
 
 # Função para Tela de Menu Inicial
 def start_menu_screen():
@@ -83,7 +100,6 @@ def login_cadastro_client_screen():
     
     client_window.mainloop()
 
-# Função para Tela de Vendedor Logado
 def view_stock():
     seller_window = tk.Tk()
     seller_window.title("Visualizar Estoque (Como Visitante)")
@@ -111,6 +127,85 @@ def stock_view_screen():
     tk.Button(stock_window, text="Voltar", command=stock_window.destroy).pack(pady=20)
     
     stock_window.mainloop()
+
+def view_client(client_id):
+    logged_client = tk.Tk()
+    logged_client.title("Tela do Cliente")
+    logged_client.geometry("400x600")
+    
+    tk.Label(logged_client, text="Tela do Cliente", font=("Arial", 18)).pack(pady=20)
+    tk.Button(logged_client, text="Verificar seus dados", command=lambda: view_client_data(client_id)).pack(pady=10)
+    tk.Button(logged_client, text="Verificar compras passadas", command=view_stock).pack(pady=10)
+    tk.Button(logged_client, text="Adicionar produtos ao carrinho", command=view_stock).pack(pady=10)
+    tk.Button(logged_client, text="Remover produtos do carrinho", command=view_stock).pack(pady=10)
+    tk.Button(logged_client, text="Realizar compra", command=view_stock).pack(pady=10)
+    tk.Button(logged_client, text="Procurar um produto", command=view_stock).pack(pady=10)
+    tk.Button(logged_client, text="Listar todos os produtos", command=view_stock).pack(pady=10)
+
+    
+    tk.Button(logged_client, text="Voltar", command=logged_client.destroy).pack(pady=10)
+
+    logged_client.mainloop()
+
+import tkinter.ttk as ttk
+
+def view_client_data(client_id):
+    try:
+        # Usar a API do cliente para obter os dados do cliente
+        client_data = client_api.sgbd.read(
+            "cliente", 
+            "*", 
+            f"cliente_id = {client_id}"
+        )[0]
+
+        # Criar uma nova janela para mostrar os dados do cliente
+        client_data_window = tk.Toplevel()
+        client_data_window.title("Dados do Cliente")
+        client_data_window.geometry("800x300")
+
+        # Criar uma Treeview para exibir os dados do cliente
+        tree = ttk.Treeview(client_data_window)
+        tree["columns"] = ("ID", "Nome", "Senha", "Torce pro Flamengo", "Assiste One Piece", "Mora em Sousa")
+
+        # Definir os cabeçalhos das colunas
+        tree.column("#0", width=0, stretch=tk.NO)  # Coluna fantasma para a árvore (não necessária)
+        tree.column("ID", anchor=tk.CENTER, width=50)
+        tree.column("Nome", anchor=tk.W, width=150)
+        tree.column("Senha", anchor=tk.W, width=100)
+        tree.column("Torce pro Flamengo", anchor=tk.CENTER, width=150)
+        tree.column("Assiste One Piece", anchor=tk.CENTER, width=150)
+        tree.column("Mora em Sousa", anchor=tk.CENTER, width=150)
+
+        # Criar os cabeçalhos das colunas
+        tree.heading("#0", text="", anchor=tk.W)
+        tree.heading("ID", text="ID", anchor=tk.CENTER)
+        tree.heading("Nome", text="Nome", anchor=tk.W)
+        tree.heading("Senha", text="Senha", anchor=tk.W)
+        tree.heading("Torce pro Flamengo", text="Torce pro Flamengo", anchor=tk.CENTER)
+        tree.heading("Assiste One Piece", text="Assiste One Piece", anchor=tk.CENTER)
+        tree.heading("Mora em Sousa", text="Mora em Sousa", anchor=tk.CENTER)
+
+        # Adicionar os dados do cliente à Treeview
+        tree.insert(
+            "", 
+            tk.END, 
+            values=(
+                client_data[0], 
+                client_data[1], 
+                client_data[2], 
+                "Sim" if client_data[3] else "Nao", 
+                "Sim" if client_data[4] else "Nao", 
+                "Sim" if client_data[5] else "Nao"
+            )
+        )
+
+        tree.pack(pady=20)
+
+        tk.Button(client_data_window, text="Fechar", command=client_data_window.destroy).pack(pady=20)
+
+    except Exception as e:
+        messagebox.showerror("Erro", f"Erro ao tentar visualizar os dados do cliente: {str(e)}")
+
 
 # Executar a tela de login inicialmente
 if __name__ == "__main__":

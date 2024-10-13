@@ -13,24 +13,12 @@ class ClientAPI:
         self.sgbd = sgbd
         self.vd = vd
 
-    def login(self) -> Tuple[bool, int]:
-        client_id = self.vd.validate_int(
-            "\nInsira o ID do cliente: ",
-            "Por favor, insira um ID valido.",
-            lambda x: x > 0,
-        )
-
+    def login(self, client_id: int, password: str) -> Tuple[bool, int]:
         client_data = self.sgbd.read("cliente", "senha", f"cliente_id = {client_id}")
 
         if not client_data:
             print("\nO cliente informado nao esta registrado.")
             return (False, -1)
-
-        password = self.vd.validate_str(
-            "\nInsira a senha do cliente: ",
-            "Por favor, insira uma senha valida, com tamanho entre 3 e 20.\n",
-            lambda x: 3 <= len(x) and len(x) <= 20,
-        )
 
         client_password = client_data[0][0]
         if password != client_password:
@@ -39,6 +27,33 @@ class ClientAPI:
 
         print("\nLog in realizado com sucesso.")
         return (True, client_id)
+    
+    # def login(self) -> Tuple[bool, int]:
+    #     client_id = self.vd.validate_int(
+    #         "\nInsira o ID do cliente: ",
+    #         "Por favor, insira um ID valido.",
+    #         lambda x: x > 0,
+    #     )
+
+    #     client_data = self.sgbd.read("cliente", "senha", f"cliente_id = {client_id}")
+
+    #     if not client_data:
+    #         print("\nO cliente informado nao esta registrado.")
+    #         return (False, -1)
+
+    #     password = self.vd.validate_str(
+    #         "\nInsira a senha do cliente: ",
+    #         "Por favor, insira uma senha valida, com tamanho entre 3 e 20.\n",
+    #         lambda x: 3 <= len(x) and len(x) <= 20,
+    #     )
+
+    #     client_password = client_data[0][0]
+    #     if password != client_password:
+    #         print("\nA senha informada esta incorreta.")
+    #         return (False, -1)
+
+    #     print("\nLog in realizado com sucesso.")
+    #     return (True, client_id)
 
     def register(self) -> Tuple[bool, int]:
         client = Client()
