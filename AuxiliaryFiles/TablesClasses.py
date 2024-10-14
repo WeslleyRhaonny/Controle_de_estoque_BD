@@ -91,7 +91,7 @@ class Product:
             "Por favor, responda apenas com 'Sim' ou 'Não'.\n",
             lambda x: x[0].lower() in "sn"
         )
-        self.values[7] = "TRUE" if opt in 's' else "FALSE"
+        self.values[7] = "TRUE" if opt in ['s', 'S'] else "FALSE"
 
 
 class Client:
