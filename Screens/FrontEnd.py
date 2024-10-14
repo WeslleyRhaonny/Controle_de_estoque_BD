@@ -24,6 +24,7 @@ app_manager.start()
 sgbd = app_manager.sgbd
 vd = app_manager.vd
 client_api = ClientAPI(sgbd, vd)
+seller_api = SellerAPI(sgbd, vd)
 
 # Função para Tela de Login
 def login_screen():
@@ -69,6 +70,170 @@ def login_screen():
 
     login.mainloop()
 
+def login_seller_screen():
+    login = tk.Tk()
+    login.title("Login")
+    login.geometry("400x300")
+
+    tk.Label(login, text="Login", font=("Arial", 18)).pack(pady=20)
+
+    tk.Label(login, text="Usuário (ID):").pack()
+    username_entry = tk.Entry(login)
+    username_entry.pack()
+
+    tk.Label(login, text="Senha:").pack()
+    password_entry = tk.Entry(login, show="*")
+    password_entry.pack()
+
+    def submit_login():
+        user_id = username_entry.get()
+        password = password_entry.get()
+
+        try:
+            user_id = int(user_id)  # Convertendo o ID para inteiro
+        except ValueError:
+            messagebox.showerror("Erro", "ID do vendedor deve ser um número.")
+            return
+
+        # Tentativa de login via client_api
+        try:
+            # Chamando a API de login com o ID e senha do cliente
+            result, seller_id = seller_api.login(user_id, password)
+
+            # Se o login for bem-sucedido
+            if result:
+                login.destroy()  # Fecha a tela de login
+                messagebox.showinfo("Sucesso", f"Login realizado com sucesso! ID: {seller_id}")
+                view_seller()  # Abre o menu principal
+            else:
+                messagebox.showerror("Erro", "Usuário ou senha inválidos!")
+        except Exception as e:
+            messagebox.showerror("Erro", f"Erro ao tentar login: {str(e)}")
+    tk.Button(login, text="Entrar", command=submit_login).pack(pady=20)
+
+    login.mainloop()
+import tkinter as tk
+from tkinter import messagebox
+
+def register_seller_screen():
+    register_window = tk.Tk()
+    register_window.title("Cadastro Vendedor")
+    register_window.geometry("400x400")
+
+    tk.Label(register_window, text="Cadastro Vendedor", font=("Arial", 18)).pack(pady=20)
+
+    # Entrada para o nome de usuário
+    tk.Label(register_window, text="Nome de Usuário:").pack()
+    username_entry = tk.Entry(register_window)
+    username_entry.pack()
+
+    # Entrada para a senha
+    tk.Label(register_window, text="Senha:").pack()
+    password_entry = tk.Entry(register_window, show="*")
+    password_entry.pack()
+
+    # Entrada para o token de autenticação
+    tk.Label(register_window, text="Token de Autenticação:").pack()
+    token_entry = tk.Entry(register_window, show = "*")
+    token_entry.pack()
+
+    def submit_registration():
+        username = username_entry.get()
+        password = password_entry.get()
+        token = token_entry.get()
+
+        # Validações de entrada
+        if not username or not password or not token:
+            messagebox.showerror("Erro", "Todos os campos devem ser preenchidos.")
+            return
+
+        if token != "123":
+            messagebox.showerror("Erro", "Token de autenticação incorreto.")
+            return
+
+        # Criar um novo vendedor (adapte de acordo com sua estrutura de Seller)
+        new_seller = {
+            "nome_usuario": username,
+            "senha": password,
+            "token": token,
+        }
+
+        try:
+            # Registrar o novo vendedor usando a API
+            result, seller_id = seller_api.register(new_seller)
+            if result:
+                messagebox.showinfo("Sucesso", f"Cadastro realizado com sucesso! ID: {seller_id}")
+                register_window.destroy()  # Fecha a tela de cadastro
+            else:
+                messagebox.showerror("Erro", "Erro ao realizar o cadastro.")
+        except Exception as e:
+            messagebox.showerror("Erro", f"Erro ao tentar cadastrar: {str(e)}")
+
+    tk.Button(register_window, text="Cadastrar", command=submit_registration).pack(pady=20)
+
+    register_window.mainloop()
+
+# Função para Tela de Cadastro
+def register_screen():
+    register_window = tk.Tk()
+    register_window.title("Cadastro")
+    register_window.geometry("400x400")
+
+    tk.Label(register_window, text="Cadastro", font=("Arial", 18)).pack(pady=20)
+
+    # Entrada para o nome
+    tk.Label(register_window, text="Nome:").pack()
+    name_entry = tk.Entry(register_window)
+    name_entry.pack()
+
+    # Entrada para a senha
+    tk.Label(register_window, text="Senha:").pack()
+    password_entry = tk.Entry(register_window, show="*")
+    password_entry.pack()
+
+    # Checkboxes para preferências
+    flamengo_var = tk.IntVar()
+    onepiece_var = tk.IntVar()
+    sousa_var = tk.IntVar()
+
+    tk.Checkbutton(register_window, text="Torce pro Flamengo", variable=flamengo_var).pack()
+    tk.Checkbutton(register_window, text="Assiste One Piece", variable=onepiece_var).pack()
+    tk.Checkbutton(register_window, text="Mora em Sousa", variable=sousa_var).pack()
+
+    def submit_registration():
+        name = name_entry.get()
+        password = password_entry.get()
+
+        # Validações de entrada
+        if not name or not password:
+            messagebox.showerror("Erro", "Todos os campos devem ser preenchidos.")
+            return
+
+        # Criar um dicionário com os dados do novo cliente
+        new_client = {
+            "nome": name,
+            "senha": password,
+            "torce_flamengo": flamengo_var.get(),
+            "assiste_onepiece": onepiece_var.get(),
+            "mora_sousa": sousa_var.get(),
+        }
+
+        try:
+            # Registrar o novo cliente usando a API
+            result, client_id = client_api.register(new_client)
+            if result:
+                messagebox.showinfo("Sucesso", f"Cadastro realizado com sucesso! ID: {client_id}")
+                register_window.destroy()  # Fecha a tela de cadastro
+            else:
+                messagebox.showerror("Erro", "Erro ao realizar o cadastro.")
+        except Exception as e:
+            messagebox.showerror("Erro", f"Erro ao tentar cadastrar: {str(e)}")
+
+
+    tk.Button(register_window, text="Cadastrar", command=submit_registration).pack(pady=20)
+
+    register_window.mainloop()
+
 
 # Função para Tela de Menu Inicial
 def start_menu_screen():
@@ -79,7 +244,8 @@ def start_menu_screen():
     
     tk.Label(menu, text="Menu Inicial", font=("Arial", 18)).pack(pady=20)
 
-    tk.Button(menu, text="Login / Cadastro", command=login_cadastro_client_screen).pack(pady=10)
+    tk.Button(menu, text="Login / Cadastro (Cliente)", command=login_cadastro_client_screen).pack(pady=10)
+    tk.Button(menu, text="Login / Cadastro (Vendedor)", command=login_cadastro_seller_screen).pack(pady=10)
     tk.Button(menu, text="Visualizar estoque (Como visitante)", command=view_stock).pack(pady=10)
     
     menu.mainloop()
@@ -92,7 +258,22 @@ def login_cadastro_client_screen():
     
     tk.Label(client_window, text="Bem-vindo!", font=("Arial", 18)).pack(pady=20)
     tk.Button(client_window, text="Log In", command=login_screen).pack(pady=10)
-    tk.Button(client_window, text=" Cadastrar-se", command=login_cadastro_client_screen).pack(pady=10)
+    tk.Button(client_window, text=" Cadastrar-se", command=register_screen).pack(pady=10)
+    
+    # Adicione elementos específicos para a tela do cliente aqui
+    
+    tk.Button(client_window, text="Voltar ao Menu Inicial", command=client_window.destroy).pack(pady=10)
+    
+    client_window.mainloop()
+
+def login_cadastro_seller_screen():
+    client_window = tk.Tk()
+    client_window.title("Log In / Cadastro")
+    client_window.geometry("400x300")
+    
+    tk.Label(client_window, text="Bem-vindo!", font=("Arial", 18)).pack(pady=20)
+    tk.Button(client_window, text="Log In", command=login_seller_screen).pack(pady=10)
+    tk.Button(client_window, text=" Cadastrar-se", command=register_seller_screen).pack(pady=10)
     
     # Adicione elementos específicos para a tela do cliente aqui
     
@@ -146,6 +327,25 @@ def view_client(client_id):
     tk.Button(logged_client, text="Voltar", command=logged_client.destroy).pack(pady=10)
 
     logged_client.mainloop()
+
+def view_seller():
+    logged_seller = tk.Tk()
+    logged_seller.title("Tela do Vendedor")
+    logged_seller.geometry("400x600")
+    
+    tk.Label(logged_seller, text="Tela do Vendedor", font=("Arial", 18)).pack(pady=20)
+    tk.Button(logged_seller, text="Inserir um produto", command=view_stock).pack(pady=10)
+    tk.Button(logged_seller, text="Modificar um produto", command=view_stock).pack(pady=10)
+    tk.Button(logged_seller, text="Remover um produto", command=view_stock).pack(pady=10)
+    tk.Button(logged_seller, text="Procurar um produto", command=view_stock).pack(pady=10)
+    tk.Button(logged_seller, text="Listar todos os produtos", command=view_stock).pack(pady=10)
+    tk.Button(logged_seller, text="Exibir relatório mensal", command=view_stock).pack(pady=10)
+    tk.Button(logged_seller, text="Exibir relatório do estoque", command=view_stock).pack(pady=10)
+
+    
+    tk.Button(logged_seller, text="Voltar", command=logged_seller.destroy).pack(pady=10)
+
+    logged_seller.mainloop()
 
 import tkinter.ttk as ttk
 

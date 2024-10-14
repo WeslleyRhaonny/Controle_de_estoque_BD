@@ -24,8 +24,8 @@ class AppManager:
     def __init__(self) -> None:
         cadastro_lucas = ["postgres", "postgres", "admin", "localhost", "5432"]
         cadastro_eliane = ["postgres", "postgres", "admin@123", "localhost", "5432"]
-        cadastro_wesley = ["", "", "", "", ""]
-        self.sgbd = SGBD(*cadastro_eliane)
+        cadastro_weslley = ["postgres", "postgres", "Weslley13*", "localhost", "5432"]
+        self.sgbd = SGBD(*cadastro_weslley)
         self.vd = Validator()
         self.ti = TablesInfo()
         self.vi = ViewsInfo()

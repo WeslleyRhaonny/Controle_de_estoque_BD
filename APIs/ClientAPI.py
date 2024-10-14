@@ -3,6 +3,8 @@ from AuxiliaryFiles.Validator import Validator
 from AuxiliaryFiles.TablesClasses import Client
 from time import sleep
 from typing import Optional, Tuple
+from typing import Dict, Tuple
+
 
 
 class ClientAPI:
@@ -55,13 +57,39 @@ class ClientAPI:
     #     print("\nLog in realizado com sucesso.")
     #     return (True, client_id)
 
-    def register(self) -> Tuple[bool, int]:
-        client = Client()
-        client_id = self.sgbd.insert("cliente", client.columns, client.values, ("cliente_id",))[0]
-        print("\nCadastro realizado com sucesso.")
-        print(f"O ID do cliente cadastrado é: '{client_id}', esse ID será utilizado junto da senha para realizar o login.")
+    # def register(self) -> Tuple[bool, int]:
+    #     client = Client()
+    #     client_id = self.sgbd.insert("cliente", client.columns, client.values, ("cliente_id",))[0]
+    #     print("\nCadastro realizado com sucesso.")
+    #     print(f"O ID do cliente cadastrado é: '{client_id}', esse ID será utilizado junto da senha para realizar o login.")
 
-        return (True, client_id)
+    #     return (True, client_id)
+
+    def register(self, client_data: Dict[str, str]) -> Tuple[bool, int]:
+
+    # Registra um novo cliente no sistema.
+
+    # :param client_data: Dicionário com as informações do cliente.
+    # :return: Retorna uma tupla com o status (True para sucesso) e o ID do cliente.
+
+        try:
+            client = Client(
+                name=client_data["nome"],
+                password=client_data["senha"],
+                flamengo=client_data["torce_flamengo"],
+                one_piece=client_data["assiste_onepiece"],
+                sousa=client_data["mora_sousa"]
+            )
+
+            client_id = self.sgbd.insert("cliente", client.columns, client.values, ("cliente_id",))[0]
+            print("\nCadastro realizado com sucesso.")
+            print(f"O ID do cliente cadastrado é: '{client_id}', esse ID será utilizado junto da senha para realizar o login.")
+
+            return (True, client_id)
+        except Exception as e:
+            print(f"Erro ao registrar cliente: {str(e)}")
+            return (False, -1)
+
 
     def verify_data(self, client_id):
         client_data = self.sgbd.read(

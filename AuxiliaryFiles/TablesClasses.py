@@ -94,72 +94,96 @@ class Product:
         self.values[7] = "TRUE" if opt in 's' else "FALSE"
 
 
+# class Client:
+#     columns: Optional[Tuple[str]] = None
+#     values: Optional[List[str]] = None
+
+#     def __init__(self, values: Optional[List[str]] = None) -> None:
+#         """
+#         Inicializa um objeto Client com valores opcionais.
+
+#         :param values: Lista contendo os valores para as colunas do cliente.
+#         """
+#         ti = TablesInfo.TABLES_DEFINITIONS["cliente"]
+#         self.columns = tuple(ti.keys())[1:]
+#         if values:
+#             self.values = values
+#         else:
+#             self.initiate_values()
+
+#     def initiate_values(self) -> None:
+#         """
+#         Inicializa os valores para as colunas do cliente.
+#         """
+#         vd = Validator()
+#         self.values = [None] * len(self.columns)
+#         self.change_name(vd)
+#         self.change_password(vd)
+#         self.change_flamengo(vd)
+#         self.change_one_piece(vd)
+#         self.change_sousa(vd)
+
+#     def change_name(self, vd: Validator):
+#         self.values[0] = vd.validate_str(
+#             "\nInsira o nome do cliente (Com ate 100 caracteres): ",
+#             "Por favor, insira um nome valido.\n",
+#             lambda x: len(x) <= 100,
+#         )
+
+#     def change_password(self, vd: Validator):
+#         self.values[1] = vd.validate_str(
+#             "Insira a senha do cliente (Com ate 20 caracteres): ",
+#             "Por favor, insira uma senha valida, com tamanho entre 3 e 20.\n",
+#             lambda x: 3 <= len(x) and len(x) <= 20,
+#         )
+
+#     def change_flamengo(self, vd: Validator):
+#         opt = vd.validate_str(
+#             "Informe se o cliente torce para o Flamengo [S/N]: ",
+#             "Por favor, responda apenas com 'Sim' ou 'Não'.\n",
+#             lambda x: x[0].lower() in "sn"
+#         )
+#         self.values[2] = "TRUE" if opt in ['s', 'S'] else "FALSE"
+
+#     def change_one_piece(self, vd: Validator):
+#         opt = vd.validate_str(
+#             "Informe se o cliente assiste One Piece [S/N]: ",
+#             "Por favor, responda apenas com 'Sim' ou 'Não'.\n",
+#             lambda x: x[0].lower() in "sn"
+#         )
+#         self.values[3] = "TRUE" if opt in ['s', 'S'] else "FALSE"
+
+#     def change_sousa(self, vd: Validator):
+#         opt = vd.validate_str(
+#             "Informe se o cliente mora em Sousa [S/N]: ",
+#             "Por favor, responda apenas com 'Sim' ou 'Não'.\n",
+#             lambda x: x[0].lower() in "sn"
+#         )
+#         self.values[4] = "TRUE" if opt in ['s', 'S'] else "FALSE"
+
 class Client:
     columns: Optional[Tuple[str]] = None
     values: Optional[List[str]] = None
 
-    def __init__(self, values: Optional[List[str]] = None) -> None:
+    def __init__(self, name: str, password: str, flamengo: int, one_piece: int, sousa: int) -> None:
         """
-        Inicializa um objeto Client com valores opcionais.
+        Inicializa um objeto Client com valores fornecidos da interface de cadastro.
 
-        :param values: Lista contendo os valores para as colunas do cliente.
+        :param name: Nome do cliente.
+        :param password: Senha do cliente.
+        :param flamengo: Indica se o cliente torce para o Flamengo (1 para sim, 0 para não).
+        :param one_piece: Indica se o cliente assiste One Piece (1 para sim, 0 para não).
+        :param sousa: Indica se o cliente mora em Sousa (1 para sim, 0 para não).
         """
         ti = TablesInfo.TABLES_DEFINITIONS["cliente"]
-        self.columns = tuple(ti.keys())[1:]
-        if values:
-            self.values = values
-        else:
-            self.initiate_values()
-
-    def initiate_values(self) -> None:
-        """
-        Inicializa os valores para as colunas do cliente.
-        """
-        vd = Validator()
-        self.values = [None] * len(self.columns)
-        self.change_name(vd)
-        self.change_password(vd)
-        self.change_flamengo(vd)
-        self.change_one_piece(vd)
-        self.change_sousa(vd)
-
-    def change_name(self, vd: Validator):
-        self.values[0] = vd.validate_str(
-            "\nInsira o nome do cliente (Com ate 100 caracteres): ",
-            "Por favor, insira um nome valido.\n",
-            lambda x: len(x) <= 100,
-        )
-
-    def change_password(self, vd: Validator):
-        self.values[1] = vd.validate_str(
-            "Insira a senha do cliente (Com ate 20 caracteres): ",
-            "Por favor, insira uma senha valida, com tamanho entre 3 e 20.\n",
-            lambda x: 3 <= len(x) and len(x) <= 20,
-        )
-
-    def change_flamengo(self, vd: Validator):
-        opt = vd.validate_str(
-            "Informe se o cliente torce para o Flamengo [S/N]: ",
-            "Por favor, responda apenas com 'Sim' ou 'Não'.\n",
-            lambda x: x[0].lower() in "sn"
-        )
-        self.values[2] = "TRUE" if opt in ['s', 'S'] else "FALSE"
-
-    def change_one_piece(self, vd: Validator):
-        opt = vd.validate_str(
-            "Informe se o cliente assiste One Piece [S/N]: ",
-            "Por favor, responda apenas com 'Sim' ou 'Não'.\n",
-            lambda x: x[0].lower() in "sn"
-        )
-        self.values[3] = "TRUE" if opt in ['s', 'S'] else "FALSE"
-
-    def change_sousa(self, vd: Validator):
-        opt = vd.validate_str(
-            "Informe se o cliente mora em Sousa [S/N]: ",
-            "Por favor, responda apenas com 'Sim' ou 'Não'.\n",
-            lambda x: x[0].lower() in "sn"
-        )
-        self.values[4] = "TRUE" if opt in ['s', 'S'] else "FALSE"
+        self.columns = tuple(ti.keys())[1:]  # Define as colunas da tabela
+        self.values = [
+            name,  # Nome
+            password,  # Senha
+            "TRUE" if flamengo else "FALSE",  # Torce Flamengo
+            "TRUE" if one_piece else "FALSE",  # Assiste One Piece
+            "TRUE" if sousa else "FALSE"  # Mora em Sousa
+        ]
 
 
 class Seller:
