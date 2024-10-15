@@ -25,7 +25,7 @@ class AppManager:
         cadastro_lucas = ["postgres", "postgres", "admin", "localhost", "5432"]
         cadastro_eliane = ["postgres", "postgres", "admin@123", "localhost", "5432"]
         cadastro_weslley = ["postgres", "postgres", "Weslley13*", "localhost", "5432"]
-        self.sgbd = SGBD(*cadastro_weslley)
+        self.sgbd = SGBD(*cadastro_eliane)
         self.vd = Validator()
         self.ti = TablesInfo()
         self.vi = ViewsInfo()
