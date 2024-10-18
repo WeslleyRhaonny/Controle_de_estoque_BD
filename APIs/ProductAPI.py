@@ -260,10 +260,11 @@ class ProductAPI:
         out_of_stock_products = [" - ".join([str(y) for y in x]) for x in self.sgbd.read("produto", ("prod_id", "nome",), "quantidade = 0")]
 
         today_date = datetime.now().strftime('%Y-%m-%d')
-        expired_products = [" - ".join([str(y) for y in x]) for x in self.sgbd.read("produto", ("prod_id", "nome",), f"data_validade < '{today_date}'")]
+        expired_products = [" - ".join([str(y) for y in x]) for x in self.sgbd.read("produto", ("prod_id", "nome",), f"data_validade < '{today_date}' AND quantidade > 0")]
 
         expiration_date = (datetime.now() + timedelta(10)).strftime('%Y-%m-%d') 
-        close_to_expiration_products = [" - ".join([str(y) for y in x]) for x in self.sgbd.read("produto", ("prod_id", "nome",), f"data_validade > '{today_date}' AND data_validade < '{expiration_date}'")]
+        close_to_expiration_products = [" - ".join([str(y) for y in x]) for x in self.sgbd.read("produto", ("prod_id", "nome",), f"data_validade > '{today_date}' AND data_validade < '{expiration_date}' AND quantidade > 0")]
+
 
         print(f"\n+{'-' * 60}+")
         sleep(0.1)
