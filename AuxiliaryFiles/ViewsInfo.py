@@ -6,7 +6,7 @@ class ViewsInfo:
                                 v.nome AS nome_vendedor,
                                 DATE_TRUNC('month', c.data) AS mes,
                                 SUM(p.quantidade) AS total_produtos_vendidos,
-                                SUM(c.preco_total) AS total_vendas
+                                MAX(c.preco_total) AS total_vendas
                             FROM 
                                 compra c
                             JOIN 
